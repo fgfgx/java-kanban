@@ -5,7 +5,6 @@ import java.util.Objects;
 public class Subtask extends Task {
     private int epicId;
 
-
     public Subtask(int id, TaskStatus taskStatus, int EpicId) {
         super(taskStatus, id);
         this.epicId = EpicId;
@@ -13,7 +12,6 @@ public class Subtask extends Task {
 
     public Subtask(int id) {
     }
-
 
     public int getEpicId() {
         return epicId;
