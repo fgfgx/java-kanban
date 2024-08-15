@@ -48,7 +48,7 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void getNewId() {
-        int id = inMemoryTaskManager.ыgetNewId();
+        int id = inMemoryTaskManager.getNewId();
         assertEquals(id, 13, "Идентификатор некорректный");
     }
 
