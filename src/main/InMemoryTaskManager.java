@@ -1,7 +1,12 @@
 package main;
 
 
-import main.models.*;
+import main.models.Status;
+import main.models.Task;
+import main.models.Subtask;
+import main.models.Epic;
+import main.models.ManagerSaveException;
+
 
 import java.util.*;
 
@@ -38,25 +43,21 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     // -----------------------------------------------------------
-    // Методы для работы с задачами
     public int getId() {
         return idTask;
     }
 
-    // Формирование нового индентификатора для задачи
     public int getNewId() {
         idTask++;
         return idTask;
     }
 
-    //  a. Получение списка всех задач.
     @Override
     public List<Task> getTasks() {
         return new ArrayList<Task>(taskHashMap.values());
     }
 
 
-    // b. Удаление всех задач.
     @Override
     public void deleteTasks() throws ManagerSaveException {
         taskHashMap.clear();
@@ -75,7 +76,6 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
 
-    // d. Создание. Сам объект должен передаваться в качестве параметра.
     @Override
     public void addTask(Task newTask) throws ManagerSaveException {
         int id = newTask.getId();
@@ -86,46 +86,34 @@ public class InMemoryTaskManager implements TaskManager {
         taskHashMap.put(id, newTask);
     }
 
-    //e. Обновление. Новая версия объекта с верным идентификатором передаётся в виде параметра.
     @Override
     public void updateTask(Task newTask) throws ManagerSaveException {
         taskHashMap.replace(newTask.getId(), newTask);
     }
 
-    // f. Удаление по идентификатору.
     @Override
     public void deleteTask(int id) throws ManagerSaveException {
         taskHashMap.remove(id);
     }
 
-    // g. изменение статуса задачи
     @Override
     public void changeTaskStatus(Task task, Status status) throws ManagerSaveException {
         task.setStatus(status);
     }
 
-
-    // -----------------------------------------------------------
-    // Методы для работы с подзадачами
-    // -----------------------------------------------------------
-
-    //  a. Получение списка всех подзадач.
     @Override
     public List<Subtask> getSubtasks() {
         return new ArrayList<Subtask>(subtaskHashMap.values());
     }
 
-    //b. Удаление всех подзадач
     @Override
     public void deleteSubtasks() throws ManagerSaveException {
-        // во всех эпиках очищаем список индентификаторов его подзадач
         for (Epic e : epicHashMap.values()) {
             e.clearAllSubtasks();
         }
         subtaskHashMap.clear();
     }
 
-    //  c. Получение подзадачи по идентификатору.
     @Override
     public Subtask getSubtask(int id) throws ManagerSaveException {
 
@@ -138,7 +126,6 @@ public class InMemoryTaskManager implements TaskManager {
         return null;
     }
 
-    // d. Создание подзадачи. Сам объект должен передаваться в качестве параметра.
     @Override
     public void addSubtask(Subtask newSubtask) throws ManagerSaveException {
         int id = newSubtask.getId();
@@ -156,7 +143,6 @@ public class InMemoryTaskManager implements TaskManager {
 
     }
 
-    //e. Обновление подзадачи. Новая версия объекта с верным идентификатором передаётся в виде параметра.
     @Override
     public void updateSubtask(Subtask newSubtask) throws ManagerSaveException {
         subtaskHashMap.replace(newSubtask.getId(), newSubtask);
@@ -164,7 +150,6 @@ public class InMemoryTaskManager implements TaskManager {
         updateEpicStatus(epic);
     }
 
-    // f. Удаление подзадачи по идентификатору.
     @Override
     public void deleteSubtask(int id) throws ManagerSaveException {
         if (subtaskHashMap.containsKey(id)) {
@@ -185,8 +170,6 @@ public class InMemoryTaskManager implements TaskManager {
         updateEpicStatus(epic);
     }
 
-
-    //метод для проверки имеют ли все подзадачи эпика один и тот же статус
     @Override
     public boolean hasAllSubtaskSameStatus(Status status, Epic epic) {
         for (int i : epic.getSubtasksIds()) {
@@ -196,24 +179,17 @@ public class InMemoryTaskManager implements TaskManager {
         return true;
     }
 
-
-    // ЭПИКИ
-    //Формирование нового индентификатора для эпика
-    //  a. Получение списка всех эпиков.
     @Override
     public List<Epic> getEpics() {
         return new ArrayList<>(epicHashMap.values());
     }
 
-
-    // b. Удаление всех эпиков и их подзадач.
     @Override
     public void deleteEpics() throws ManagerSaveException {
         epicHashMap.clear();
         subtaskHashMap.clear();
     }
 
-    //  c. Получение по идентификатору.
     @Override
     public Epic getEpic(int id) throws ManagerSaveException {
         if (epicHashMap.containsKey(id)) {
@@ -226,7 +202,6 @@ public class InMemoryTaskManager implements TaskManager {
         return null;
     }
 
-    // d. Создание. Сам объект должен передаваться в качестве параметра.
     @Override
     public void addEpic(Epic newEpic) throws ManagerSaveException {
         int id = newEpic.getId();
@@ -237,7 +212,6 @@ public class InMemoryTaskManager implements TaskManager {
         epicHashMap.put(id, newEpic);
     }
 
-    //e. Обновление. Новая версия объекта с верным идентификатором передаётся в виде параметра.
     @Override
     public void updateEpic(Epic newEpic) throws ManagerSaveException {
         epicHashMap.replace(newEpic.getId(), newEpic);
@@ -250,7 +224,6 @@ public class InMemoryTaskManager implements TaskManager {
         updateEpicStatus(epic);
     }
 
-    // f. Удаление по идентификатору.
     @Override
     public void deleteEpic(int id) throws ManagerSaveException {
         if (epicHashMap.containsKey(id)) {
@@ -263,21 +236,19 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    // метод обновления статуса Эпика
     @Override
     public void updateEpicStatus(Epic epic) throws ManagerSaveException {
-        // список подзадач пуст
+
         if (epic.getSubtasksIds().isEmpty()) {
             epic.setStatus(Status.NEW);
             return;
         }
-        // все подзадачи имеют статус NEW
+
         if (hasAllSubtaskSameStatus(Status.NEW, epic)) {
             epic.setStatus(Status.NEW);
             return;
         }
 
-        // все подзадачи имеют статус DONE
         if (hasAllSubtaskSameStatus(Status.DONE, epic)) {
             epic.setStatus(Status.DONE);
             return;
