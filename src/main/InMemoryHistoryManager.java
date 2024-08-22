@@ -55,7 +55,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     public void removeNode(Node node) {
-        // в списке один элемент
+
         if (size == 1) {
             head = null;
             tail = null;

@@ -10,7 +10,7 @@ import java.util.List;
 
 public class CSVTaskFormatter {
 
-    // Метод подготавливает строку для сохранения в файл
+
     static String makeDataToSave(List<Task> tasks, List<Subtask> subtasks, List<Epic> epics, HistoryManager historyManager) {
 
         StringBuilder history = new StringBuilder();
@@ -35,7 +35,7 @@ public class CSVTaskFormatter {
         return history.toString();
     }
 
-    // Возвращает строку из id задач через запятую, которые есть в истории
+
     static String historyToString(HistoryManager manager) {
         StringBuilder result = new StringBuilder();
         int i = 0;
@@ -61,9 +61,9 @@ public class CSVTaskFormatter {
         return result;
     }
 
-    // Создание task, subtask or epic в зависимости, какая строка передана
+
     public static Task fromString(String value) {
-        //в качестве результата создает таск определенного типа
+
         String[] data = value.split(",");
         int id = Integer.parseInt(data[0]);
         String title = data[2];
@@ -84,7 +84,10 @@ public class CSVTaskFormatter {
             case EPIC: {
                 return new Epic(id, title, description, status, Duration.ofMinutes(duration), startTime, null);
             }
+            default: {
+                return null;
+            }
         }
-        return null;
+
     }
 }
