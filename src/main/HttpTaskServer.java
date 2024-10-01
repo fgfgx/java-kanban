@@ -13,17 +13,17 @@ import java.util.ArrayList;
 
 public class HttpTaskServer {
     private static final int PORT = 8080;
-    public static TaskManager taskManager = Managers.getDefault();
-    private static HttpServer httpServer;
+    public TaskManager taskManager = Managers.getDefault();
+    private HttpServer httpServer;
 
-    public static void main() throws IOException {
+    public void main() throws IOException {
         setUp();
         createServer();
         start();
         System.out.println("HTTP-сервер запущен на " + PORT + " порту!");
     }
 
-    public static void createServer() throws IOException {
+    public void createServer() throws IOException {
         httpServer = HttpServer.create(new InetSocketAddress(PORT), 0);
         httpServer.createContext("/tasks", new TasksHandler(taskManager));
         httpServer.createContext("/subtasks", new SubtasksHandler(taskManager));
@@ -32,18 +32,18 @@ public class HttpTaskServer {
         httpServer.createContext("/prioritized", new PriorityHandler(taskManager));
     }
 
-    public static void start() {
+    public void start() {
 
         httpServer.start();
     }
 
-    public static void stop() {
+    public void stop() {
         httpServer.stop(1);
         System.out.println("HTTP-сервер завершен!");
 
     }
 
-    public static void setUp() throws ManagerSaveException {
+    public void setUp() throws ManagerSaveException {
 
         Duration duration30minutes = Duration.ofMinutes(30);
         Task task1 = new Task("Задача 1", "Описание задачи 1", Status.NEW, duration30minutes, null);
