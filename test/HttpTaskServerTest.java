@@ -1,7 +1,7 @@
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import main.HttpTaskServer;
-import main.httphandlers.LocalDateTimeTypeAdapter;
+import main.http_handlers.LocalDateTimeTypeAdapter;
 import main.models.*;
 import org.junit.jupiter.api.*;
 
@@ -14,7 +14,6 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TreeSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 

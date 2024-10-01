@@ -1,7 +1,7 @@
 package main;
 
 import com.sun.net.httpserver.HttpServer;
-import main.httphandlers.*;
+import main.http_handlers.*;
 import main.models.*;
 
 import java.io.IOException;
@@ -13,17 +13,17 @@ import java.util.ArrayList;
 
 public class HttpTaskServer {
     private static final int PORT = 8080;
-    public TaskManager taskManager = Managers.getDefault();
-    private HttpServer httpServer;
+    public static TaskManager taskManager = Managers.getDefault();
+    private static HttpServer httpServer;
 
-    public void main() throws IOException {
+    public static void main() throws IOException {
         setUp();
         createServer();
         start();
         System.out.println("HTTP-сервер запущен на " + PORT + " порту!");
     }
 
-    public void createServer() throws IOException {
+    public static void createServer() throws IOException {
         httpServer = HttpServer.create(new InetSocketAddress(PORT), 0);
         httpServer.createContext("/tasks", new TasksHandler(taskManager));
         httpServer.createContext("/subtasks", new SubtasksHandler(taskManager));
@@ -32,18 +32,18 @@ public class HttpTaskServer {
         httpServer.createContext("/prioritized", new PriorityHandler(taskManager));
     }
 
-    public void start() {
+    public static void start() {
 
         httpServer.start();
     }
 
-    public void stop() {
+    public static void stop() {
         httpServer.stop(1);
         System.out.println("HTTP-сервер завершен!");
 
     }
 
-    public void setUp() throws ManagerSaveException {
+    public static void setUp() throws ManagerSaveException {
 
         Duration duration30minutes = Duration.ofMinutes(30);
         Task task1 = new Task("Задача 1", "Описание задачи 1", Status.NEW, duration30minutes, null);
